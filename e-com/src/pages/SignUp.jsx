@@ -1,0 +1,144 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const SignUp = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+
+  const validateField = (name, value) => {
+    if (name === "name") {
+      if (!value.trim()) return "Name is required";
+      if (value.trim().length < 2) return "Name must be at least 2 characters";
+    }
+
+    if (name === "email") {
+      if (!value.trim()) return "Email is required";
+      if (!/\S+@\S+\.\S+/.test(value)) return "Enter a valid email";
+    }
+
+    if (name === "password") {
+      if (!value.trim()) return "Password is required";
+      if (value.length < 6) return "Password must be at least 6 characters";
+    }
+
+    return "";
+  };
+
+  const validateAllFields = (data) => {
+    const newErrors = {};
+    Object.entries(data).forEach(([key, value]) => {
+      const errorMsg = validateField(key, value);
+      if (errorMsg) {
+        newErrors[key] = errorMsg;
+      }
+    });
+    return newErrors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    const errorMsg = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+  };
+
+  const handleSignUp = () => {
+    const newErrors = validateAllFields(formData);
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(Boolean);
+    if (hasErrors) return;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const userExists = users.some((user) => user.email === formData.email);
+
+    if (userExists) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "User with this email already exists",
+      }));
+      return;
+    }
+
+    localStorage.setItem("users", JSON.stringify([...users, formData]));
+    toast.success("Account Created");
+    navigate("/signin");
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="flex flex-col md:flex-row max-w-4xl w-full bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Left Panel */}
+        <div className="md:w-1/2 bg-[#3C4B51] text-white flex flex-col justify-center items-center p-8 md:p-10">
+          <h2 className="text-3xl font-bold mb-4 text-center">Welcome Back!</h2>
+          <p className="mb-6 text-center text-sm">
+            To keep connected with us please login with your personal info
+          </p>
+          <Link
+            to="/signin"
+            className="border-2 border-white px-6 py-2 rounded-full hover:bg-white hover:text-teal-500 transition text-sm"
+          >
+            SIGN IN
+          </Link>
+        </div>
+
+        {/* Right Panel */}
+        <div className="md:w-1/2 w-full p-8 md:p-10">
+          <h2 className="text-3xl text-gray-500 font-bold mb-4">Create Account</h2>
+
+          {/* Name */}
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            className="mb-1 px-4 py-2 border w-full rounded-full"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          {errors.name && <p className="text-red-500 text-sm mb-2">{errors.name}</p>}
+
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="mb-1 px-4 py-2 border w-full rounded-full"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {errors.email && <p className="text-red-500 text-sm mb-2">{errors.email}</p>}
+
+          {/* Password */}
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="mb-1 px-4 py-2 border w-full rounded-full"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {errors.password && (
+            <p className="text-red-500 text-sm mb-4">{errors.password}</p>
+          )}
+
+          <button
+            onClick={handleSignUp}
+            className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-full font-semibold w-full"
+          >
+            SIGN UP
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SignUp;
