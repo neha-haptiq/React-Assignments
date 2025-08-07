@@ -12,51 +12,26 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState({});
 
-  const validateField = (name, value) => {
-    let message = "";
 
+  const validateField = (name, value) => {
     if (name === "name") {
-      if (!value.trim()) message = "Name is required";
-      else if (value.trim().length < 2)
-        message = "Name must be at least 2 characters";
+      if (!value.trim()) return "Name is required";
+      if (value.trim().length < 2) return "Name must be at least 2 characters";
     }
 
     if (name === "email") {
-      if (!value.trim()) message = "Email is required";
-      else if (!/\S+@\S+\.\S+/.test(value))
-        message = "Enter a valid email";
+      if (!value.trim()) return "Email is required";
+      if (!/\S+@\S+\.\S+/.test(value)) return "Enter a valid email";
     }
 
     if (name === "password") {
-      if (!value.trim()) message = "Password is required";
-      else if (value.length < 6)
-        message = "Password must be at least 6 characters";
+      if (!value.trim()) return "Password is required";
+      if (value.length < 6) return "Password must be at least 6 characters";
     }
 
-    setErrors((prev) => ({ ...prev, [name]: message }));
+    return "";
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
-  };
-
-  const handleSignUp = () => {
-
-    Object.entries(formData).forEach(([key, value]) =>
-      validateField(key, value)
-    );
-    return message;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    const errorMsg = validateField(name, value);
-    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
-  };
-  // Validate all fields and return an errors object
   const validateAllFields = (data) => {
     const newErrors = {};
     Object.entries(data).forEach(([key, value]) => {
@@ -78,6 +53,7 @@ const SignUp = () => {
   const handleSignUp = () => {
     const newErrors = validateAllFields(formData);
     setErrors(newErrors);
+
     const hasErrors = Object.values(newErrors).some(Boolean);
     if (hasErrors) return;
 
@@ -85,7 +61,10 @@ const SignUp = () => {
     const userExists = users.some((user) => user.email === formData.email);
 
     if (userExists) {
-      setErrors((prev) => ({ ...prev, email: "User with this email already exists" }));
+      setErrors((prev) => ({
+        ...prev,
+        email: "User with this email already exists",
+      }));
       return;
     }
 
@@ -146,7 +125,9 @@ const SignUp = () => {
             value={formData.password}
             onChange={handleChange}
           />
-          {errors.password && <p className="text-red-500 text-sm mb-4">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-sm mb-4">{errors.password}</p>
+          )}
 
           <button
             onClick={handleSignUp}
