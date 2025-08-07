@@ -11,7 +11,8 @@ export default function BookCard({ book }) {
   const wishlist = useSelector((state) => state.wishlist);
   const isInWishlist = wishlist.some((item) => item.id === book.id);
 
-  const handleToggleWishlist = () => {
+  const handleToggleWishlist = (e) => {
+   e.stopPropagation();
     dispatch(toggleWishlist(book));
     if (isInWishlist) {
       toast.info(`${book.name} removed from wishlist`);
