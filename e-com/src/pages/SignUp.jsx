@@ -49,7 +49,6 @@ const SignUp = () => {
     );
     return message;
   };
-
   // Validate all fields and return an errors object
   const validateAllFields = (data) => {
     const newErrors = {};
