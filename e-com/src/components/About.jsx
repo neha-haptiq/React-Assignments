@@ -7,7 +7,7 @@ export default function About() {
         {/* Left Image */}
         <div className="lg:w-1/2 mb-10 lg:mb-0">
           <img
-            src="public/about-img.png"
+            src="/about-img.png"
             alt="Bookstore illustration"
             className="w-full max-w-md mx-auto"
           />
