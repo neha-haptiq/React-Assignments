@@ -57,31 +57,28 @@ const cartSlice = createSlice({
     console.error("Error updating localStorage:", error);
   }
 },
-    decrementQuantity: (state, action) => {
-      const item = state.find((item) => item.id === action.payload.id);
-      if (item) {
-        if (item.quantity === 1) {
-          return state.filter((i) => i.id !== item.id);
-        } else {
-          item.quantity -= 1;
-          const index = state.findIndex((i) => i.id === item.id);
-          if (index !== -1) {
-            state.splice(index, 1);
-          }
-        } else {
-          item.quantity -= 1;
-        }
-        // Persist the updated cart to localStorage
-        try {
-          const user = JSON.parse(localStorage.getItem("loggedInUser"));
-          if (user?.email) {
-            localStorage.setItem(`cart_${user.email}`, JSON.stringify(state));
-          }
-        } catch (error) {
-          console.error("Error updating localStorage:", error);
-        }
+   decrementQuantity: (state, action) => {
+  const itemIndex = state.findIndex((item) => item.id === action.payload.id);
+  
+  if (itemIndex !== -1) {
+    if (state[itemIndex].quantity === 1) {
+      state.splice(itemIndex, 1);
+    } else {
+      state[itemIndex].quantity -= 1;
+    }
+
+    // Persist the updated cart to localStorage
+    try {
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (user?.email) {
+        localStorage.setItem(`cart_${user.email}`, JSON.stringify(state));
       }
-    },
+    } catch (error) {
+      console.error("Error updating localStorage:", error);
+    }
+  }
+}
+
 restoreCart: (state, action) => {
   const restoredCart = action.payload;
   return restoredCart;
