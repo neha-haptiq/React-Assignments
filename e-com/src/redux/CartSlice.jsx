@@ -64,6 +64,21 @@ const cartSlice = createSlice({
           return state.filter((i) => i.id !== item.id);
         } else {
           item.quantity -= 1;
+          const index = state.findIndex((i) => i.id === item.id);
+          if (index !== -1) {
+            state.splice(index, 1);
+          }
+        } else {
+          item.quantity -= 1;
+        }
+        // Persist the updated cart to localStorage
+        try {
+          const user = JSON.parse(localStorage.getItem("loggedInUser"));
+          if (user?.email) {
+            localStorage.setItem(`cart_${user.email}`, JSON.stringify(state));
+          }
+        } catch (error) {
+          console.error("Error updating localStorage:", error);
         }
       }
     },
