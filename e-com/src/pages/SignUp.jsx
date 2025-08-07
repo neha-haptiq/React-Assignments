@@ -47,7 +47,32 @@ const SignUp = () => {
     Object.entries(formData).forEach(([key, value]) =>
       validateField(key, value)
     );
-    const hasErrors = Object.values(errors).some(Boolean);
+    return message;
+  };
+
+  // Validate all fields and return an errors object
+  const validateAllFields = (data) => {
+    const newErrors = {};
+    Object.entries(data).forEach(([key, value]) => {
+      const errorMsg = validateField(key, value);
+      if (errorMsg) {
+        newErrors[key] = errorMsg;
+      }
+    });
+    return newErrors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    const errorMsg = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+  };
+
+  const handleSignUp = () => {
+    const newErrors = validateAllFields(formData);
+    setErrors(newErrors);
+    const hasErrors = Object.values(newErrors).some(Boolean);
     if (hasErrors) return;
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
