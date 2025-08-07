@@ -47,6 +47,14 @@ const SignUp = () => {
     Object.entries(formData).forEach(([key, value]) =>
       validateField(key, value)
     );
+    return message;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    const errorMsg = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
   };
   // Validate all fields and return an errors object
   const validateAllFields = (data) => {
