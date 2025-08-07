@@ -20,7 +20,8 @@ export default function BookCard({ book }) {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     dispatch(addToCart(book));
     toast.success(`${book.name} added to cart`);
   };
